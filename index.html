@@ -3154,6 +3154,57 @@ body.light-mode .hard-adjust-input.good{
   font-size:2.02rem !important;
 }
 
+
+/* =========================================================
+   V66 — case du -1 un peu plus à gauche et plus grande
+   ========================================================= */
+.adjust-input,
+.adjust-input:focus,
+.adjust-input.filled,
+.adjust-input.good,
+.adjust-input.bad,
+.adjust-input.active-entry{
+  left:9px !important;
+  right:auto !important;
+  width:calc(var(--cell) * .84) !important;
+  height:calc(var(--cell) * .70) !important;
+  border-radius:11px !important;
+}
+.adjust-input{
+  font-size:1.38rem !important;
+  line-height:calc(var(--cell) * .70) !important;
+}
+.adjust-input.filled,
+.adjust-input.good,
+.adjust-input.bad,
+.adjust-input.active-entry{
+  font-size:2.28rem !important;
+  line-height:calc(var(--cell) * .70) !important;
+}
+.hard-adjust-input,
+.hard-adjust-input.filled,
+.hard-adjust-input.good,
+.hard-adjust-input.bad,
+.hard-adjust-input.active-entry{
+  left:5px !important;
+  right:auto !important;
+  width:calc(var(--hard-cell) * .90) !important;
+  height:calc(var(--hard-cell) * .74) !important;
+  border-radius:11px !important;
+  padding:4px 0 0 0 !important;
+}
+.hard-adjust-input{
+  font-size:1.94rem !important;
+}
+.hard-adjust-input.filled,
+.hard-adjust-input.good,
+.hard-adjust-input.bad,
+.hard-adjust-input.active-entry{
+  font-size:2.20rem !important;
+}
+
+
+/* V67 : nettoyage final JS (doublons + synchronisation réglage commun sans récursion). */
 </style>
 </head>
 <body>
@@ -3163,7 +3214,7 @@ body.light-mode .hard-adjust-input.good{
   <h1>Soustraction écrite</h1>
   <div class="subtitle-row">
   <p class="subtitle">Deux calculs à la fois, avec saisie chiffre par chiffre.</p>
-  <span class="app-version">v65</span>
+  <span class="app-version">v68</span>
 </div>
 </header>
 
@@ -3233,7 +3284,7 @@ body.light-mode .hard-adjust-input.good{
 
   <div class="menu-heading">
     <h2>Choisis ton mode</h2>
-    <p>La taille choisie est la taille <strong>maximale</strong> du nombre du haut.</p>
+    <p>Choisis un <strong>niveau</strong>, puis ton type de partie.</p>
   </div>
   <div class="mode-grid">
     <article class="mode-card training">
@@ -3241,7 +3292,7 @@ body.light-mode .hard-adjust-input.good{
       <h3 class="mode-title">Entraînement</h3>
       <p class="mode-description">Deux calculs à la fois, sans points et sans limite. Les erreurs se corrigent avant de continuer.</p>
       <div class="mode-settings">
-        <label for="trainingMaxDigits">Taille MAX</label>
+        <label for="trainingMaxDigits">Niveau</label>
         <select id="trainingMaxDigits"></select>
         <button class="btn btn-training" id="startTraining" type="button">S’entraîner</button>
       </div>
@@ -3261,7 +3312,7 @@ body.light-mode .hard-adjust-input.good{
       </div>
       <div class="score-memory hidden" id="bestClassicScore"></div>
       <div class="mode-settings">
-        <label for="classicMaxDigits">Taille MAX</label>
+        <label for="classicMaxDigits">Niveau</label>
         <select id="classicMaxDigits"></select>
         <button class="btn btn-primary" id="startClassic" type="button">Lancer les calculs</button>
       </div>
@@ -3273,7 +3324,7 @@ body.light-mode .hard-adjust-input.good{
       <p class="mode-description">Deux calculs à la fois. La première réponse fausse arrête immédiatement la partie.</p>
       <div class="score-memory hidden" id="bestSuddenScore"></div>
       <div class="mode-settings">
-        <label for="suddenMaxDigits">Taille MAX</label>
+        <label for="suddenMaxDigits">Niveau</label>
         <select id="suddenMaxDigits"></select>
         <button class="btn btn-gold" id="startSudden" type="button">Lancer la mort subite</button>
       </div>
@@ -3309,20 +3360,20 @@ body.light-mode .hard-adjust-input.good{
 
       <div class="numpad" id="numpad">
         <p class="numpad-title">Clavier tactile</p>
-        <button class="num-key" data-key="1" tabindex="-1">1</button>
-        <button class="num-key" data-key="2" tabindex="-1">2</button>
-        <button class="num-key" data-key="3" tabindex="-1">3</button>
-        <button class="num-key" data-key="4" tabindex="-1">4</button>
-        <button class="num-key" data-key="5" tabindex="-1">5</button>
-        <button class="num-key" data-key="6" tabindex="-1">6</button>
-        <button class="num-key" data-key="7" tabindex="-1">7</button>
-        <button class="num-key" data-key="8" tabindex="-1">8</button>
-        <button class="num-key" data-key="9" tabindex="-1">9</button>
-        <button class="num-key action" data-key="backspace" tabindex="-1">⌫</button>
-        <button class="num-key" data-key="0" tabindex="-1">0</button>
-        <button class="num-key check" data-key="check" tabindex="-1">✓</button>
-        <button class="num-key borrow-key" data-key="borrow" tabindex="-1">↩ Faire un emprunt</button>
-        <button class="num-key primary-text-key" id="numpadPrimaryBtn" data-key="check" tabindex="-1">Valider</button>
+        <button type="button" class="num-key" data-key="1" tabindex="-1">1</button>
+        <button type="button" class="num-key" data-key="2" tabindex="-1">2</button>
+        <button type="button" class="num-key" data-key="3" tabindex="-1">3</button>
+        <button type="button" class="num-key" data-key="4" tabindex="-1">4</button>
+        <button type="button" class="num-key" data-key="5" tabindex="-1">5</button>
+        <button type="button" class="num-key" data-key="6" tabindex="-1">6</button>
+        <button type="button" class="num-key" data-key="7" tabindex="-1">7</button>
+        <button type="button" class="num-key" data-key="8" tabindex="-1">8</button>
+        <button type="button" class="num-key" data-key="9" tabindex="-1">9</button>
+        <button type="button" class="num-key action" data-key="backspace" tabindex="-1">⌫</button>
+        <button type="button" class="num-key" data-key="0" tabindex="-1">0</button>
+        <button type="button" class="num-key check" data-key="check" tabindex="-1">✓</button>
+        <button type="button" class="num-key borrow-key" data-key="borrow" tabindex="-1">↩ Faire un emprunt</button>
+        <button type="button" class="num-key primary-text-key" id="numpadPrimaryBtn" data-key="check" tabindex="-1">Valider</button>
       </div>
     </div>
 
@@ -3337,6 +3388,31 @@ body.light-mode .hard-adjust-input.good{
 </section>
 </main>
 
+<script>
+function enregistrerScoreMathas(score, total, niveau) {
+  const key = "mathas_scores_" + window.location.pathname.toLowerCase();
+
+  let scores = [];
+
+  try {
+    scores = JSON.parse(localStorage.getItem(key)) || [];
+  } catch {
+    scores = [];
+  }
+
+  scores.unshift({
+    score,
+    total,
+    niveau,
+    date: new Date().toISOString()
+  });
+
+  localStorage.setItem(
+    key,
+    JSON.stringify(scores.slice(0, 3))
+  );
+}
+</script>
 <script>
 (() => {
   const menuScreen=document.getElementById('menuScreen'),gameScreen=document.getElementById('gameScreen'),fullscreenBtn=document.getElementById('fullscreenBtn');
@@ -3581,17 +3657,18 @@ body.light-mode .hard-adjust-input.good{
   function safeSet(k,v){try{localStorage.setItem(k,JSON.stringify(v))}catch{}}
 
   function fillSelect(s){
-    for(let n=2;n<=8;n++){
-      const o=document.createElement('option');o.value=n;
-      o.textContent=`${n} chiffres max`;s.appendChild(o)
-    }
+    [[3,'Niveau 1'],[5,'Niveau 2'],[7,'Niveau 3']].forEach(([value,label])=>{
+      const o=document.createElement('option');o.value=value;o.textContent=label;s.appendChild(o)
+    })
   }
+  function normalizeLevelMax(v){v=+v||5;return v<=3?3:v<=5?5:7}
+  function normalLevelFromMax(v){return +v===3?1:+v===5?2:3}
   fillSelect(classicMaxDigits);fillSelect(suddenMaxDigits);fillSelect(trainingMaxDigits);
   const settings=safeGet(STORAGE.settings,{classicMax:5,suddenMax:5,trainingMax:5,classicCount:10,borrowMethod:'addBottom'});
-  classicMaxDigits.value=settings.classicMax||5;suddenMaxDigits.value=settings.suddenMax||5;trainingMaxDigits.value=settings.trainingMax||5;
+  classicMaxDigits.value=normalizeLevelMax(settings.classicMax);suddenMaxDigits.value=normalizeLevelMax(settings.suddenMax);trainingMaxDigits.value=normalizeLevelMax(settings.trainingMax);
   const savedMethod=settings.borrowMethod==='takeTop'?'takeTop':'addBottom';
   borrowMethodInputs.forEach(r=>r.checked=r.value===savedMethod);
-  const savedClassicCount=10;
+  const savedClassicCount=[4,10,20].includes(+settings.classicCount)?+settings.classicCount:10;
 
   function selectedBorrowMethod(){return borrowMethodInputs.find(r=>r.checked)?.value||'addBottom'}
   function setPrimaryActionLabel(label){primaryBtn.textContent=label;numpadPrimaryBtn.textContent=label}
@@ -3610,9 +3687,9 @@ body.light-mode .hard-adjust-input.good{
   function saveSettings(){safeSet(STORAGE.settings,{classicMax:+classicMaxDigits.value,suddenMax:+suddenMaxDigits.value,trainingMax:+trainingMaxDigits.value,classicCount:selectedClassicCount(),borrowMethod:selectedBorrowMethod()})}
   updateClassicCountUI(savedClassicCount);
   function renderScoreList(el,scores,title,suffix='',usedScores={}){
-    const entries=[];for(let n=2;n<=8;n++){const v=Number(scores[n]);if(Number.isFinite(v))entries.push([n,v])}
+    const entries=[];for(const n of [3,5,7]){const v=Number(scores[n]);if(Number.isFinite(v))entries.push([n,v])}
     if(!entries.length){el.innerHTML='';el.classList.add('hidden');return}
-    el.innerHTML=`<div class="score-memory-title">${title}</div>`+entries.map(([n,v])=>`<div class="score-line"><span>${n} chiffres max</span><strong class="${usedScores[n]?'ruler-used-score':''}">${v}${suffix}</strong></div>`).join('');
+    el.innerHTML=`<div class="score-memory-title">${title}</div>`+entries.map(([n,v])=>`<div class="score-line"><span>Niveau ${normalLevelFromMax(n)}</span><strong class="${usedScores[n]?'ruler-used-score':''}">${v}${suffix}</strong></div>`).join('');
     el.classList.remove('hidden')
   }
   function classicScoreStore(){
@@ -3667,7 +3744,7 @@ body.light-mode .hard-adjust-input.good{
   function renderClassicScores(el,scores){
     const usage=rulerUsageStore().classic;
     const rows=[];
-    for(let n=2;n<=8;n++){
+    for(const n of [3,5,7]){
       const row=scores[n]||scores[String(n)];
       if(!row||typeof row!=='object')continue;
       const usedRow=usage[n]||usage[String(n)]||{};
@@ -3677,7 +3754,7 @@ body.light-mode .hard-adjust-input.good{
         return Number.isFinite(v)?`<span class="classic-best-pill score-${count}${used?' ruler-used-score':''}">${v}/${count}</span>`:''
       }).filter(Boolean);
       if(!pills.length)continue;
-      rows.push(`<div class="classic-best-row"><span>${n} chiffres max</span><div class="classic-best-line">${pills.join('')}</div></div>`)
+      rows.push(`<div class="classic-best-row"><span>Niveau ${normalLevelFromMax(n)}</span><div class="classic-best-line">${pills.join('')}</div></div>`)
     }
     if(!rows.length){el.innerHTML='';el.classList.add('hidden');return}
     el.innerHTML=`<div class="score-memory-title">Meilleurs scores</div>`+rows.join('');
@@ -3695,7 +3772,7 @@ body.light-mode .hard-adjust-input.good{
     saveSettings();
     const maxDigits=mode==='classic'?+classicMaxDigits.value:mode==='sudden'?+suddenMaxDigits.value:+trainingMaxDigits.value;
     const totalCalculs=mode==='classic'?selectedClassicCount():null;
-    session={mode,maxDigits,totalCalculs,score:0,completed:0,borrowMethod:selectedBorrowMethod(),rulerUsed:false};
+    session={mode,maxDigits,level:normalLevelFromMax(maxDigits),totalCalculs,score:0,completed:0,borrowMethod:selectedBorrowMethod(),rulerUsed:false};
     menuScreen.classList.add('hidden');gameScreen.classList.remove('hidden');updateBorrowHelp();makePair()
   }
   function goMenu(){removeCelebrations();setScoreRulerVisible(false);gameScreen.classList.add('hidden');menuScreen.classList.remove('hidden');refreshMenuScores();window.scrollTo({top:0,behavior:'smooth'})}
@@ -3826,28 +3903,6 @@ body.light-mode .hard-adjust-input.good{
     }
   }
 
-  function ensureTopBorrowPath(s,col){
-    const donor=col+1;
-    if(donor>=s.count)return false;
-    let available=s.topDigits[donor]+(s.borrowed[donor]?10:0);
-    if(available>0)return true;
-    if(!ensureTopBorrowPath(s,donor))return false;
-    const donorLeft=donor+1;
-    const availableLeft=s.topDigits[donorLeft]+(s.borrowed[donorLeft]?10:0);
-    s.borrowed[donor]=true;
-    s.carry[donor+1]=1;
-    s.adjustValues[donorLeft]='';
-    s.adjustExpected[donorLeft]=availableLeft-1;
-    return true
-  }
-
-  function highestPendingAdjustment(s,minCol){
-    for(let c=s.count-1;c>=Math.max(1,minCol);c--){
-      if(s.borrowed[c-1]&&(s.adjustValues[c]??'')==='')return c
-    }
-    return null
-  }
-
   function previousPendingAdjustment(s,startCol){
     for(let c=startCol;c>=1;c--){
       if(s.borrowed[c-1]&&(s.adjustValues[c]??'')==='')return c
@@ -3860,32 +3915,39 @@ body.light-mode .hard-adjust-input.good{
     clearHintVisuals();
     const s=states[i],on=!s.borrowed[col];
     let donor=null,available=null;
+
     if(session.borrowMethod==='takeTop'&&on){
       donor=col+1;
-      if(!ensureTopBorrowPath(s,col)){
+      if(donor>=s.count){
         setFeedback('Il n’y a plus de chiffre disponible à gauche pour emprunter.','info');return
       }
+      // Important : si le donneur vaut 0, on autorise quand même cette étape.
+      // La petite case reste alors en attente et un nouvel appui sur
+      // « Faire un emprunt » ira chercher dans la colonne encore à gauche.
       available=s.topDigits[donor]+(s.borrowed[donor]?10:0);
     }
+
     s.borrowed[col]=on;s.carry[col+1]=on?1:0;
+
     if(session.borrowMethod==='takeTop'){
       donor=col+1;
       if(on){
-        // On mémorise la valeur attendue au moment de l'emprunt.
-        // Ainsi, si cette colonne reçoit ensuite un autre emprunt,
-        // la valeur déjà diminuée ne disparaît pas et ne change pas.
         s.adjustValues[donor]='';
-        s.adjustExpected[donor]=available-1;
+        s.adjustExpected[donor]=available>0?available-1:null;
       }else{
         s.adjustValues[donor]='';
         s.adjustExpected[donor]=null;
         removeInvalidRightBorrows(s,col);
       }
     }
+
     refreshBorrowDisplay(i);
+
     if(session.borrowMethod==='takeTop'&&on){
-      const nextAdjust=highestPendingAdjustment(s,donor);
-      focusAdjustment(i,nextAdjust??col+1)
+      focusAdjustment(i,donor);
+      if(available<=0){
+        setFeedback('Ce chiffre vaut 0 : appuie encore sur « Faire un emprunt » pour aller chercher une dizaine plus à gauche.','info')
+      }
     }
   }
 
@@ -3960,8 +4022,17 @@ body.light-mode .hard-adjust-input.good{
     if(phase!=='answering')return;
 
     if(active.kind==='adjust'){
-      setFeedback('Complète d’abord la petite case du nombre diminué, puis reprends le calcul.','info');
-      const a=adjustmentFor(active.calc,active.col);
+      const i=active.calc,col=active.col,s=states[i];
+      if(!s||s.solved)return;
+      const available=s.topDigits[col]+(s.borrowed[col]?10:0);
+      if(available<=0&&col<s.count-1){
+        // Le chiffre que l'on devait diminuer est 0 : un nouvel appui
+        // prolonge l'emprunt d'une colonne vers la gauche.
+        toggleBorrow(i,col);
+        return
+      }
+      setFeedback('Écris maintenant la nouvelle valeur de ce chiffre dans la petite case.','info');
+      const a=adjustmentFor(i,col);
       if(a)a.focus({preventScroll:true});
       return
     }
@@ -4051,8 +4122,11 @@ body.light-mode .hard-adjust-input.good{
       const a=adjustmentFor(active.calc,active.col);if(!a)return;
       if(k==='backspace'){eraseBorrowFromNumpad();return}
       if(/^\d$/.test(k)){
-        a.value=active.replace?k:(a.value+k).slice(0,2);active.replace=false;states[active.calc].adjustValues[active.col]=a.value;updateAdjustFeedback(active.calc,active.col);
-        if(Number(a.value)===expectedAdjustment(states[active.calc],active.col)){setTimeout(()=>focusInput(active.calc,active.col-1),80)}
+        a.value=k;active.replace=false;states[active.calc].adjustValues[active.col]=a.value;updateAdjustFeedback(active.calc,active.col);
+        if(Number(a.value)===expectedAdjustment(states[active.calc],active.col)){
+          const nextAdjust=previousPendingAdjustment(states[active.calc],active.col-1);
+          setTimeout(()=>{if(nextAdjust!==null)focusAdjustment(active.calc,nextAdjust);else focusInput(active.calc,active.col-1)},80)
+        }
       }
       return
     }
@@ -4181,12 +4255,6 @@ body.light-mode .hard-adjust-input.good{
     const el=calculationsPair.querySelector(`[data-status="${i}"]`);el.textContent=text;el.className=`calc-status ${type||''}`
   }
 
-  function handlePrimary(){
-    if(phase==='review'){advancePair();return}
-    if(phase==='ended'){goMenu();return}
-    verifyPair()
-  }
-
   function firstUnsolvedInput(){
     for(let i=0;i<states.length;i++){
       if(states[i].solved)continue;
@@ -4242,7 +4310,7 @@ body.light-mode .hard-adjust-input.good{
           markErrorsForCorrection(i);
           phase='ended';setNumpadDisabled(true);resetBtn.disabled=true;
           setPrimaryActionLabel('Retour au menu');
-          saveSuddenBest();window.__setLastWork&&window.__setLastWork({label:`Mort subite · ${session.maxDigits} chiffres`,score:String(session.score)});status(i,'Erreur : partie terminée','bad');
+          saveSuddenBest();window.__setLastWork&&window.__setLastWork({label:`Mort subite · Niveau ${session.level}`,score:String(session.score)});enregistrerScoreMathas(session.score,session.score+1,`Niveau ${session.level}`);status(i,'Erreur : partie terminée','bad');
           setFeedback(`Mort subite terminée. Score : ${session.score}.`,'bad');
           updateBar();return
         }
@@ -4382,7 +4450,8 @@ body.light-mode .hard-adjust-input.good{
     phase='ended';setNumpadDisabled(true);resetBtn.disabled=true;setPrimaryActionLabel('Retour au menu');
     if(isNewRecord)setFeedback(`Nouveau record : ${session.score}/${session.totalCalculs} !`,'ok');
     else setFeedback(`Série terminée : ${session.score}/${session.totalCalculs}.`,'ok');
-    window.__setLastWork&&window.__setLastWork({label:`Calculs · ${session.maxDigits} chiffres`,score:`${session.score}/${session.totalCalculs}`});
+    window.__setLastWork&&window.__setLastWork({label:`Calculs · Niveau ${session.level}`,score:`${session.score}/${session.totalCalculs}`});
+    enregistrerScoreMathas(session.score,session.totalCalculs,`Niveau ${session.level}`);
     updateBar();
     if(isNewRecord)showRecordCelebration(session.score,session.totalCalculs);
     else showScoreCelebration(session.score,session.totalCalculs,old)
@@ -4483,7 +4552,7 @@ body.light-mode .hard-adjust-input.good{
   if(!classicCard||!suddenCard||!trainingCard||!trainingMax||!classicMax||!suddenMax||!startTraining||!startClassic)return;
 
   menuGrid.classList.add('compact-grid');
-  menuHeading.innerHTML='Un seul réglage pour <strong>Calculs</strong> et <strong>Mort subite</strong>.';
+  menuHeading.innerHTML='Choisis un <strong>niveau</strong> pour les différents modes.';
 
   const THEME_KEY='soustraction_theme_mode_v1';
   const themeBtn=document.createElement('button');
@@ -4504,11 +4573,11 @@ body.light-mode .hard-adjust-input.good{
   const oldTrainingTitle=trainingCard.querySelector('.mode-title');
   const oldTrainingDesc=trainingCard.querySelector('.mode-description');
   if(oldTrainingTitle)oldTrainingTitle.textContent='Réglages';
-  if(oldTrainingDesc)oldTrainingDesc.textContent='Ces réglages servent pour Calculs, Entraînement et Mort subite.';
+  if(oldTrainingDesc)oldTrainingDesc.textContent='Le même niveau et la même technique servent dans les différents modes.';
   const icon=trainingCard.querySelector('.mode-icon'); if(icon)icon.textContent='⚙️';
   const settingsWrap=trainingCard.querySelector('.mode-settings');
   settingsWrap.innerHTML='';
-  const lbl=document.createElement('label'); lbl.setAttribute('for','trainingMaxDigits'); lbl.textContent='Taille du nombre du haut';
+  const lbl=document.createElement('label'); lbl.setAttribute('for','trainingMaxDigits'); lbl.textContent='Niveau';
   settingsWrap.append(lbl, trainingMax);
   const note=document.createElement('p'); note.className='shared-note'; note.textContent='Choix commun à tous les modes.';
   settingsWrap.append(note);
@@ -4531,8 +4600,13 @@ body.light-mode .hard-adjust-input.good{
   const unifiedMax=classicMax.value||trainingMax.value||suddenMax.value||'5';
   [trainingMax,classicMax,suddenMax].forEach(el=>el.value=unifiedMax);
   function syncMax(){
-    [classicMax,suddenMax].forEach(el=>{el.value=trainingMax.value; el.dispatchEvent(new Event('change',{bubbles:true}))});
-    trainingMax.dispatchEvent(new Event('change',{bubbles:true}));
+    // trainingMax est la source visible du réglage commun.
+    // Ne jamais redispatcher "change" sur trainingMax ici : cela rappellerait
+    // syncMax récursivement. On synchronise seulement les deux sélecteurs liés.
+    [classicMax,suddenMax].forEach(el=>{
+      el.value=trainingMax.value;
+      el.dispatchEvent(new Event('change',{bubbles:true}))
+    })
   }
   trainingMax.addEventListener('change', syncMax);
 
@@ -5096,22 +5170,35 @@ body.light-mode .hard-adjust-input.good{
     if(c>=hardState.count-1){
       setFeedback('Il n’y a pas de colonne à gauche pour emprunter ici.','info');return
     }
+
+    if(hardState.borrowed[c]){
+      if(currentBorrowMethod()==='takeTop')focusHard('adjust',c+1);
+      else focusHard('answer',c);
+      return
+    }
+
+    let available=null;
     if(currentBorrowMethod()==='takeTop'){
       const donor=c+1;
-      if(!ensureHardTopBorrowPath(c)){
-        setFeedback('Il n’y a plus de chiffre disponible à gauche pour emprunter.','info');return
-      }
-      const available=digitAt(hardState.top,donor)+(hardState.borrowed[donor]?10:0);
+      available=digitAt(hardState.top,donor)+(hardState.borrowed[donor]?10:0);
       hardState.adjustValues[donor]='';
-      hardState.adjustExpected[donor]=available-1;
+      hardState.adjustExpected[donor]=available>0?available-1:null;
     }
+
     hardState.borrowed[c]=true;
     refreshHardBorrowVisuals();
-    setFeedback(hardState.borrowNeeded[c]?'Emprunt affiché.':'Emprunt affiché (il n’était pas nécessaire pour cette colonne).','info');
+
     if(currentBorrowMethod()==='takeTop'){
-      const nextAdjust=highestPendingHardAdjust(c+1);
-      focusHard('adjust',nextAdjust??c+1)
-    }else focusHard('answer',c)
+      focusHard('adjust',c+1);
+      if(available<=0){
+        setFeedback('Ce chiffre vaut 0 : appuie encore sur « Faire un emprunt » pour aller chercher une dizaine plus à gauche.','info')
+      }else{
+        setFeedback(hardState.borrowNeeded[c]?'Emprunt affiché.':'Emprunt affiché (il n’était pas nécessaire pour cette colonne).','info')
+      }
+    }else{
+      setFeedback(hardState.borrowNeeded[c]?'Emprunt affiché.':'Emprunt affiché (il n’était pas nécessaire pour cette colonne).','info');
+      focusHard('answer',c)
+    }
   }
 
   /* ---------- saisie ---------- */
@@ -5203,29 +5290,6 @@ body.light-mode .hard-adjust-input.good{
   function expectedAnswerDigit(col){
     return digitAt(hardState.result,col)
   }
-  function expectedHardAdjustment(col){
-    const stored=hardState.adjustExpected?.[col];
-    return Number.isFinite(stored)?stored:digitAt(hardState.top,col)+(hardState.borrowed[col]?10:0)-1
-  }
-  function ensureHardTopBorrowPath(col){
-    const donor=col+1;
-    if(donor>=hardState.count)return false;
-    let available=digitAt(hardState.top,donor)+(hardState.borrowed[donor]?10:0);
-    if(available>0)return true;
-    if(!ensureHardTopBorrowPath(donor))return false;
-    const donorLeft=donor+1;
-    const availableLeft=digitAt(hardState.top,donorLeft)+(hardState.borrowed[donorLeft]?10:0);
-    hardState.borrowed[donor]=true;
-    hardState.adjustValues[donorLeft]='';
-    hardState.adjustExpected[donorLeft]=availableLeft-1;
-    return true
-  }
-  function highestPendingHardAdjust(minCol){
-    for(let c=hardState.count-1;c>=Math.max(1,minCol);c--){
-      if(hardState.borrowed[c-1]&&(hardState.adjustValues[c]??'')==='')return c
-    }
-    return null
-  }
   function previousPendingHardAdjust(startCol){
     for(let c=startCol;c>=1;c--){
       if(hardState.borrowed[c-1]&&(hardState.adjustValues[c]??'')==='')return c
@@ -5316,7 +5380,7 @@ body.light-mode .hard-adjust-input.good{
     }
     markHardErrors();
     if(hardSession.mode==='sudden'){
-      saveBest();window.__setLastWork&&window.__setLastWork({label:`HARD LVL ${hardSession.level} · Mort subite · ${hardSession.digits} chiffres`,score:String(hardSession.score)});hardPhase='ended';setHardEnabled(false);clearBtn.disabled=true;
+      saveBest();window.__setLastWork&&window.__setLastWork({label:`HARD LVL ${hardSession.level} · Mort subite · ${hardSession.digits} chiffres`,score:String(hardSession.score)});enregistrerScoreMathas(hardSession.score,hardSession.score+1,`Hard ${hardSession.level}`);hardPhase='ended';setHardEnabled(false);clearBtn.disabled=true;
       primary.textContent='Retour au menu HARD';
       setFeedback(`Erreur : Mort subite terminée. Score : ${hardSession.score}.`,'bad');
       updateHardHeader()
