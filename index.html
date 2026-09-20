@@ -3214,7 +3214,7 @@ body.light-mode .hard-adjust-input.good{
   <h1>Soustraction écrite</h1>
   <div class="subtitle-row">
   <p class="subtitle">Deux calculs à la fois, avec saisie chiffre par chiffre.</p>
-  <span class="app-version">v68</span>
+  <span class="app-version">v70</span>
 </div>
 </header>
 
@@ -3389,28 +3389,67 @@ body.light-mode .hard-adjust-input.good{
 </main>
 
 <script>
-function enregistrerScoreMathas(score, total, niveau) {
-  const key = "mathas_scores_" + window.location.pathname.toLowerCase();
+function estMeilleurResultat(nouveau, ancien) {
+  if (!ancien) return true;
 
-  let scores = [];
+  const tauxNouveau = nouveau.total > 0
+    ? nouveau.score / nouveau.total
+    : 0;
 
-  try {
-    scores = JSON.parse(localStorage.getItem(key)) || [];
-  } catch {
-    scores = [];
+  const tauxAncien = ancien.total > 0
+    ? ancien.score / ancien.total
+    : 0;
+
+  if (tauxNouveau !== tauxAncien) {
+    return tauxNouveau > tauxAncien;
   }
 
-  scores.unshift({
+  if (nouveau.total !== ancien.total) {
+    return nouveau.total > ancien.total;
+  }
+
+  if ((nouveau.niveauRang ?? 0) !== (ancien.niveauRang ?? 0)) {
+    return (nouveau.niveauRang ?? 0) > (ancien.niveauRang ?? 0);
+  }
+
+  return true;
+}
+
+function enregistrerResultatMathas(score, total, niveau, niveauRang) {
+  const key = "mathas_scores_" + window.location.pathname.toLowerCase();
+
+  const nouveauResultat = {
     score,
     total,
     niveau,
+    niveauRang,
     date: new Date().toISOString()
-  });
+  };
 
-  localStorage.setItem(
-    key,
-    JSON.stringify(scores.slice(0, 3))
-  );
+  let donnees = {
+    dernier: null,
+    meilleur: null
+  };
+
+  try {
+    const existant = JSON.parse(localStorage.getItem(key));
+    if (existant && typeof existant === "object") {
+      donnees = {
+        dernier: existant.dernier ?? null,
+        meilleur: existant.meilleur ?? null
+      };
+    }
+  } catch {
+    // Si les anciennes données sont illisibles, on repart proprement.
+  }
+
+  donnees.dernier = nouveauResultat;
+
+  if (estMeilleurResultat(nouveauResultat, donnees.meilleur)) {
+    donnees.meilleur = nouveauResultat;
+  }
+
+  localStorage.setItem(key, JSON.stringify(donnees));
 }
 </script>
 <script>
@@ -3658,7 +3697,7 @@ function enregistrerScoreMathas(score, total, niveau) {
 
   function fillSelect(s){
     [[3,'Niveau 1'],[5,'Niveau 2'],[7,'Niveau 3']].forEach(([value,label])=>{
-      const o=document.createElement('option');o.value=value;o.textContent=label;s.appendChild(o)
+      const o=document.createElement('option');o.value=value;o.textContent=label;o.defaultSelected=value===5;s.appendChild(o)
     })
   }
   function normalizeLevelMax(v){v=+v||5;return v<=3?3:v<=5?5:7}
@@ -4310,7 +4349,7 @@ function enregistrerScoreMathas(score, total, niveau) {
           markErrorsForCorrection(i);
           phase='ended';setNumpadDisabled(true);resetBtn.disabled=true;
           setPrimaryActionLabel('Retour au menu');
-          saveSuddenBest();window.__setLastWork&&window.__setLastWork({label:`Mort subite · Niveau ${session.level}`,score:String(session.score)});enregistrerScoreMathas(session.score,session.score+1,`Niveau ${session.level}`);status(i,'Erreur : partie terminée','bad');
+          saveSuddenBest();window.__setLastWork&&window.__setLastWork({label:`Mort subite · Niveau ${session.level}`,score:String(session.score)});enregistrerResultatMathas(session.score,session.score+1,`Niveau ${session.level}`,session.level);status(i,'Erreur : partie terminée','bad');
           setFeedback(`Mort subite terminée. Score : ${session.score}.`,'bad');
           updateBar();return
         }
@@ -4451,7 +4490,7 @@ function enregistrerScoreMathas(score, total, niveau) {
     if(isNewRecord)setFeedback(`Nouveau record : ${session.score}/${session.totalCalculs} !`,'ok');
     else setFeedback(`Série terminée : ${session.score}/${session.totalCalculs}.`,'ok');
     window.__setLastWork&&window.__setLastWork({label:`Calculs · Niveau ${session.level}`,score:`${session.score}/${session.totalCalculs}`});
-    enregistrerScoreMathas(session.score,session.totalCalculs,`Niveau ${session.level}`);
+    enregistrerResultatMathas(session.score,session.totalCalculs,`Niveau ${session.level}`,session.level);
     updateBar();
     if(isNewRecord)showRecordCelebration(session.score,session.totalCalculs);
     else showScoreCelebration(session.score,session.totalCalculs,old)
@@ -5380,7 +5419,7 @@ function enregistrerScoreMathas(score, total, niveau) {
     }
     markHardErrors();
     if(hardSession.mode==='sudden'){
-      saveBest();window.__setLastWork&&window.__setLastWork({label:`HARD LVL ${hardSession.level} · Mort subite · ${hardSession.digits} chiffres`,score:String(hardSession.score)});enregistrerScoreMathas(hardSession.score,hardSession.score+1,`Hard ${hardSession.level}`);hardPhase='ended';setHardEnabled(false);clearBtn.disabled=true;
+      saveBest();window.__setLastWork&&window.__setLastWork({label:`HARD LVL ${hardSession.level} · Mort subite · ${hardSession.digits} chiffres`,score:String(hardSession.score)});enregistrerResultatMathas(hardSession.score,hardSession.score+1,`Hard ${hardSession.level}`,3+hardSession.level);hardPhase='ended';setHardEnabled(false);clearBtn.disabled=true;
       primary.textContent='Retour au menu HARD';
       setFeedback(`Erreur : Mort subite terminée. Score : ${hardSession.score}.`,'bad');
       updateHardHeader()
@@ -5524,12 +5563,14 @@ function enregistrerScoreMathas(score, total, niveau) {
           ? Math.ceil(lastNormal.offsetTop+lastNormal.offsetHeight+padBottom)
           : 210;
 
-        const openUp=below<normalHeight&&above>below;
+        // Le menu des niveaux s'ouvre vers le haut : le bas de la page
+        // ne peut ainsi jamais masquer les derniers choix.
+        const openUp=true;
 
-        wrap.classList.toggle('open-up',openUp);
-        wrap.classList.toggle('open-down',!openUp);
+        wrap.classList.add('open-up');
+        wrap.classList.remove('open-down');
 
-        const available=Math.max(150,(openUp?above:below)-8);
+        const available=Math.max(150,above-8);
         const shownHeight=Math.min(normalHeight,available);
         menu.style.height=`${shownHeight}px`;
         menu.style.maxHeight=`${shownHeight}px`;
