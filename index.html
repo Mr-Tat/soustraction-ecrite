@@ -3542,6 +3542,77 @@ body.light-mode .master-mode-note{color:#60778d}
 body.light-mode .master-mode-input{background:#fff;color:#173047;border-color:#c9d8e5}
 body.light-mode .master-mode-hotspot{background:rgba(255,255,255,.56);color:rgba(25,48,71,.40);border-color:rgba(25,48,71,.12)}
 
+
+/* =========================================================
+   VERSION 2.6 — indice de comparaison toujours disponible
+   ========================================================= */
+.calc-box{
+  overflow:visible !important;
+}
+.calc-box::after{
+  inset:0 !important;
+  border-radius:inherit !important;
+}
+.operation,.top-digit,.bottom-digit{
+  overflow:visible !important;
+}
+.compare-larger,.compare-smaller{
+  position:relative !important;
+  z-index:90 !important;
+}
+.compare-larger{
+  border-radius:11px;
+  background:rgba(34,197,94,.13) !important;
+  box-shadow:0 0 0 3px rgba(34,197,94,.18) !important;
+}
+.compare-smaller{
+  border-radius:11px;
+  background:rgba(239,68,68,.11) !important;
+  box-shadow:0 0 0 3px rgba(239,68,68,.14) !important;
+}
+.compare-larger::after,.compare-smaller::after{
+  position:absolute;
+  left:calc(100% + 7px);
+  top:50%;
+  transform:translateY(-50%);
+  z-index:150;
+  padding:5px 9px;
+  border-radius:999px;
+  font-size:.75rem;
+  font-weight:1000;
+  line-height:1;
+  white-space:nowrap;
+  pointer-events:none;
+  box-shadow:0 5px 14px rgba(0,0,0,.22);
+}
+.compare-larger::after{
+  content:"plus grand";
+  background:#21452d;
+  border:1px solid #4d8a5c;
+  color:#d8f6de;
+}
+.compare-smaller::after{
+  content:"plus petit";
+  background:#4a2528;
+  border:1px solid #8d4d53;
+  color:#ffd9dc;
+}
+body.light-mode .compare-larger::after{
+  background:#dcfce7;
+  border-color:#86efac;
+  color:#166534;
+}
+body.light-mode .compare-smaller::after{
+  background:#fee2e2;
+  border-color:#fca5a5;
+  color:#991b1b;
+}
+/* Un peu d'espace dans le conteneur de défilement quand l'indice est visible,
+   pour que les bulles puissent dépasser sans être rognées. */
+.calculations-pair.compare-hint-visible{
+  padding-right:105px !important;
+}
+
 </style>
 </head>
 <body>
@@ -3551,7 +3622,7 @@ body.light-mode .master-mode-hotspot{background:rgba(255,255,255,.56);color:rgba
   <h1>Soustraction écrite</h1>
   <div class="subtitle-row">
   <p class="subtitle">Deux calculs à la fois, avec saisie chiffre par chiffre.</p>
-  <span class="app-version">v2.5</span>
+  <span class="app-version">v2.6</span>
 </div>
 </header>
 
@@ -3718,7 +3789,7 @@ body.light-mode .master-mode-hotspot{background:rgba(255,255,255,.56);color:rgba
     <div class="controls">
       <button class="btn btn-success" id="primaryBtn" type="button">Valider</button>
       <button class="btn btn-secondary" id="resetBtn" type="button">Effacer</button>
-      <button class="btn btn-hint hidden" id="hintBtn" type="button">💡 Indice</button>
+      <button class="btn btn-hint" id="hintBtn" type="button">💡 Indice</button>
     </div>
     <div class="feedback" id="feedback" aria-live="polite">Commence par les unités du calcul 1.</div>
     <div class="legend" id="legend"></div>
@@ -4177,7 +4248,7 @@ function enregistrerResultatMathas(score, total, niveau, niveauRang) {
     states=[newState(),newState()];phase='answering';active={kind:'answer',calc:0,col:0,replace:false};
     calculationsPair.innerHTML='';states.forEach((s,i)=>renderCalc(s,i));
     setPrimaryActionLabel('Valider');resetBtn.disabled=false;setNumpadDisabled(false);
-    hintBtn.classList.toggle('hidden',session.mode!=='training');hintBtn.disabled=false;
+    hintBtn.classList.remove('hidden');hintBtn.disabled=false;
     setFeedback('Réponds aux deux calculs, puis vérifie.','');updateBar();focusInput(0,0)
   }
 
@@ -4306,6 +4377,7 @@ function enregistrerResultatMathas(score, total, niveau, niveauRang) {
     }
 
     refreshBorrowDisplay(i);
+    if(compareHintVisible)requestAnimationFrame(renderCompareHint);
 
     if(session.borrowMethod==='takeTop'&&on){
       focusAdjustment(i,donor);
@@ -4379,6 +4451,7 @@ function enregistrerResultatMathas(score, total, niveau, niveauRang) {
     requestAnimationFrame(()=>{
       const x=inputFor(i,c);
       if(x&&!x.disabled){setActiveEntry(x);x.focus({preventScroll:true});x.select()}
+      if(compareHintVisible)renderCompareHint();
     })
   }
 
@@ -4500,6 +4573,7 @@ function enregistrerResultatMathas(score, total, niveau, niveauRang) {
 
 
   let hintTracker={calc:-1,col:-1,step:0};
+  let compareHintVisible=false;
 
   function clearHintVisuals(){
     calculationsPair.querySelectorAll('.hint-target,.hint-bottom,.hint-borrow,.hint-adjust,.hint-answer').forEach(el=>{
@@ -4507,11 +4581,72 @@ function enregistrerResultatMathas(score, total, niveau, niveauRang) {
     });
     scoreRulerBtn.classList.remove('hint-ruler')
   }
-  function resetHintTracker(){hintTracker={calc:-1,col:-1,step:0};clearHintVisuals()}
+  function resetHintTracker(){hintTracker={calc:-1,col:-1,step:0};compareHintVisible=false;clearHintVisuals();clearCompareHintVisuals()}
   function currentHintCalc(){
     if(states[active.calc]&&!states[active.calc].solved)return active.calc;
     const i=states.findIndex(s=>!s.solved);return i>=0?i:0
   }
+  function clearCompareHintVisuals(){
+    calculationsPair.classList.remove('compare-hint-visible');
+    calculationsPair.querySelectorAll('.compare-larger,.compare-smaller').forEach(el=>{
+      el.classList.remove('compare-larger','compare-smaller')
+    })
+  }
+  function comparisonColumn(){
+    const i=currentHintCalc(),s=states[i];
+    if(!s)return null;
+    let c=0;
+    if(active.calc===i){
+      if(active.kind==='answer')c=active.col;
+      else if(active.kind==='adjust')c=Math.max(0,active.col-1);
+    }else{
+      const firstEmpty=[...Array(s.answerCount).keys()].find(col=>!inputFor(i,col)?.value);
+      c=Number.isInteger(firstEmpty)?firstEmpty:0;
+    }
+    c=Math.max(0,Math.min(c,s.count-1));
+    return{i,s,c}
+  }
+  function effectiveCompareValues(s,c){
+    let top=s.topDigits[c]+(s.borrowed[c]?10:0);
+    let bottom=s.bottomDigits[c]||0;
+    if(c>0&&s.borrowed[c-1]){
+      if(session.borrowMethod==='addBottom')bottom+=1;
+      else top-=1;
+    }
+    return{top,bottom}
+  }
+  function renderCompareHint(){
+    clearCompareHintVisuals();
+    if(!compareHintVisible||!session||phase!=='answering')return;
+    const info=comparisonColumn();
+    if(!info)return;
+    const {i,s,c}=info,op=opFor(i);
+    if(!op)return;
+    const top=op.querySelector(`[data-top-col="${c}"]`);
+    const bottom=op.querySelector(`[data-bottom-col="${c}"]`);
+    if(!top||!bottom)return;
+    const values=effectiveCompareValues(s,c);
+    if(values.top>values.bottom){
+      top.classList.add('compare-larger');
+      bottom.classList.add('compare-smaller');
+    }else if(values.top<values.bottom){
+      top.classList.add('compare-smaller');
+      bottom.classList.add('compare-larger');
+    }
+    calculationsPair.classList.add('compare-hint-visible');
+  }
+  function toggleCompareHint(){
+    if(!session||phase!=='answering')return;
+    compareHintVisible=!compareHintVisible;
+    if(compareHintVisible){
+      renderCompareHint();
+      setFeedback('💡 Compare les deux chiffres de la colonne : repère simplement le plus grand et le plus petit.','info');
+    }else{
+      clearCompareHintVisuals();
+      setFeedback('','');
+    }
+  }
+
   function showTrainingHint(){
     if(!session||session.mode!=='training'||phase!=='answering')return;
     clearHintVisuals();
@@ -4889,7 +5024,7 @@ function enregistrerResultatMathas(score, total, niveau, niveauRang) {
   startSudden.addEventListener('click',()=>startSession('sudden'));
   startTraining.addEventListener('click',()=>startSession('training'));
   menuBtn.addEventListener('click',goMenu);scoreRulerBtn.addEventListener('click',toggleScoreRuler);primaryBtn.addEventListener('click',handlePrimary);resetBtn.addEventListener('click',resetCurrent);
-  hintBtn.addEventListener('click',showTrainingHint);
+  hintBtn.addEventListener('click',toggleCompareHint);
   classicMaxDigits.addEventListener('change',saveSettings);
   suddenMaxDigits.addEventListener('change',saveSettings);
   trainingMaxDigits.addEventListener('change',saveSettings);
