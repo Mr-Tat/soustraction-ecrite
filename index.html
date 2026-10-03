@@ -3802,6 +3802,175 @@ header{padding-right:175px !important}
 }
 </style>
 
+
+<style id="hardSeriesAndMenuPatch">
+/* Menu de sortie : à gauche, juste avant le nom de l'activité. */
+.session-bar{
+  grid-template-columns:auto minmax(150px,1fr) repeat(6,auto) !important;
+}
+#menuBtn.menu-left{
+  justify-self:start !important;
+  white-space:nowrap !important;
+  order:-2 !important;
+}
+.session-bar .session-mode{order:-1 !important}
+@media(max-width:900px){
+  .session-bar{grid-template-columns:auto minmax(120px,1fr) auto !important}
+}
+
+/* Progression HARD en 3 calculs. */
+.hard-start[disabled],.hard-train[disabled],.hard-sudden[disabled]{
+  opacity:.34 !important;
+  filter:grayscale(.55) saturate(.45) !important;
+  cursor:not-allowed !important;
+  box-shadow:none !important;
+}
+.hard-series-score{font-weight:1000}
+.hard-series-unlock-layer{
+  position:fixed;inset:0;z-index:32000;display:grid;place-items:center;pointer-events:none;
+  background:radial-gradient(circle at center,rgba(251,191,36,.10),transparent 52%);
+}
+.hard-series-unlock-card{
+  min-width:min(86vw,470px);padding:24px 30px;border-radius:26px;text-align:center;
+  color:#fff;background:linear-gradient(145deg,rgba(84,33,19,.97),rgba(74,17,34,.97));
+  border:2px solid rgba(251,191,36,.78);box-shadow:0 24px 80px rgba(0,0,0,.48),0 0 42px rgba(251,146,60,.22);
+  font-weight:1000;font-size:clamp(1.35rem,4.5vw,2.5rem);animation:hardSeriesPop .72s cubic-bezier(.18,.88,.25,1.18) both;
+}
+.hard-series-unlock-card small{display:block;margin-top:8px;font-size:.82rem;color:#fed7aa}
+@keyframes hardSeriesPop{0%{opacity:0;transform:translateY(28px) scale(.65)}60%{opacity:1;transform:translateY(-3px) scale(1.05)}100%{opacity:1;transform:none}}
+
+/* Soustraction : bulles de comparaison demandées. */
+.compare-larger::after{content:"plus grand?" !important;font-size:1rem !important;background:#1f5a32 !important;border-color:#52a66b !important;color:#e2ffe9 !important}
+.compare-smaller::after{content:"plus petit?" !important;font-size:.72rem !important;background:#5a2026 !important;border-color:#a94d58 !important;color:#ffe2e5 !important}
+
+/* Multiplication à plusieurs chiffres : aide visuelle d'entraînement. */
+.m2-training-hint-focus{outline:3px solid rgba(251,191,36,.72)!important;outline-offset:3px!important;border-radius:9px!important;box-shadow:0 0 18px rgba(251,191,36,.18)!important}
+.m2-training-hint-shift{background:rgba(34,211,238,.18)!important;box-shadow:0 0 0 4px rgba(34,211,238,.09)!important}
+</style>
+
+
+<style id="qualityAuditPatch">
+/* Une aide utilisée reste visible dans le score, sans gros effet graphique. */
+.ruler-used-score::after,
+.aid-used-score::after{
+  content:" 💡";
+  font-size:.72em;
+  vertical-align:.08em;
+  opacity:.72;
+  filter:saturate(.75);
+}
+#sessionScore.aid-used-score::after,
+#scorePill.aid-used-score::after{
+  font-size:.68em;
+}
+
+/* Synthèse de progression : discrète, mais lisible immédiatement. */
+.quality-progress-card{
+  margin:0 0 14px;
+  padding:9px 11px;
+  border-radius:14px;
+  border:1px solid rgba(148,190,205,.16);
+  background:linear-gradient(180deg,rgba(255,255,255,.035),rgba(255,255,255,.018));
+  box-shadow:inset 0 1px 0 rgba(255,255,255,.025);
+  font-size:.76rem;
+}
+.quality-progress-title{
+  font-weight:950;
+  opacity:.74;
+  margin-bottom:6px;
+  letter-spacing:.025em;
+}
+.quality-progress-line{
+  display:flex;
+  flex-wrap:wrap;
+  gap:6px;
+}
+.quality-progress-pill{
+  padding:4px 7px;
+  border-radius:999px;
+  border:1px solid rgba(148,190,205,.14);
+  background:rgba(255,255,255,.035);
+  font-weight:850;
+  white-space:nowrap;
+}
+.quality-progress-pill.ok{opacity:.96}
+.quality-progress-pill.todo{opacity:.52}
+.quality-progress-hard{
+  margin-top:6px;
+  opacity:.78;
+  font-weight:800;
+}
+
+/* Les futures bulles/flèches d'indices ont de la marge et ne sont pas rognées. */
+.calc-box,
+.calc-operation-wrap,
+.operation,
+.main-workspace,
+.workspace,
+.m2-operation-shell,
+.m2-operation,
+.hard-calc-card{
+  overflow:visible !important;
+}
+.pair-scroll{
+  padding-top:24px !important;
+  padding-bottom:30px !important;
+}
+
+/* Effet "aide" explicite mais léger. */
+.aid-used-score{
+  text-decoration:underline dotted rgba(251,191,36,.42);
+  text-underline-offset:3px;
+}
+
+body.light-mode .quality-progress-card,
+body.light .quality-progress-card{
+  border-color:rgba(63,99,112,.16);
+  background:rgba(255,255,255,.58);
+}
+</style>
+
+
+<style id="progressiveHintAndMasterAidStyle">
+/* ---------- Indices progressifs ---------- */
+.mathas-hint-layer{position:fixed;inset:0;z-index:9800;pointer-events:none;font-family:inherit}
+.mathas-hint-layer svg{position:absolute;inset:0;width:100%;height:100%;overflow:visible}
+.mathas-hint-card{position:fixed;z-index:2;width:min(390px,calc(100vw - 24px));padding:13px 15px;border-radius:16px;border:1px solid rgba(103,232,249,.38);background:rgba(10,24,34,.96);box-shadow:0 14px 42px rgba(0,0,0,.34),inset 0 1px 0 rgba(255,255,255,.05);color:#eefcff;font-size:.94rem;line-height:1.36}
+.mathas-hint-card.large{width:min(650px,calc(100vw - 28px));padding:24px 28px;text-align:center;font-size:clamp(1.35rem,3vw,2.05rem);font-weight:950}
+.mathas-hint-title{font-size:.76rem;font-weight:1000;letter-spacing:.045em;text-transform:uppercase;color:#7dd3fc;margin-bottom:7px}
+.mathas-hint-demo{margin:8px 0 6px;display:flex;align-items:center;justify-content:center;gap:7px;font-size:1.45rem;font-weight:1000;letter-spacing:.02em}
+.mathas-hint-demo .hint-result{display:inline-flex;align-items:center;gap:1px;padding:3px 7px;border-radius:10px;background:rgba(255,255,255,.055);border:1px solid rgba(255,255,255,.08)}
+.mathas-hint-demo [data-hint-source]{display:inline-grid;place-items:center;min-width:1.05em;border-radius:7px;padding:1px 2px}
+.mathas-hint-demo .hint-units{color:#67e8f9;background:rgba(34,211,238,.12)}
+.mathas-hint-demo .hint-tens{color:#fbbf24;background:rgba(251,191,36,.11)}
+.mathas-hint-note{margin-top:5px;font-weight:850;color:#d9eef7}
+.mathas-hint-mini{font-size:.82rem;color:#bdd4de;margin-top:5px}
+.mathas-hint-focus{position:relative!important;z-index:5!important;outline:3px solid var(--hint-color,#22d3ee)!important;outline-offset:3px!important;border-radius:9px!important;box-shadow:0 0 0 5px color-mix(in srgb,var(--hint-color,#22d3ee) 15%,transparent),0 0 18px color-mix(in srgb,var(--hint-color,#22d3ee) 20%,transparent)!important;opacity:1!important;filter:none!important}
+.mathas-hint-muted{opacity:.16!important;filter:saturate(.3) grayscale(.35)!important;transition:opacity .14s ease,filter .14s ease}
+.mathas-hint-pair{position:relative!important;z-index:5!important;outline:2px solid var(--hint-color,#22d3ee)!important;outline-offset:2px!important;border-radius:9px!important;box-shadow:0 0 14px color-mix(in srgb,var(--hint-color,#22d3ee) 18%,transparent)!important}
+.mathas-hint-target-label{position:fixed;z-index:3;padding:3px 6px;border-radius:7px;background:rgba(8,19,29,.94);border:1px solid currentColor;color:var(--hint-color,#22d3ee);font-size:.7rem;font-weight:950;white-space:nowrap;transform:translate(-50%,-115%)}
+body.light-mode .mathas-hint-card,body.light .mathas-hint-card{background:rgba(250,253,255,.97);color:#173041;border-color:rgba(8,145,178,.26);box-shadow:0 14px 35px rgba(15,23,42,.16)}
+body.light-mode .mathas-hint-note,body.light .mathas-hint-note{color:#29485a}
+body.light-mode .mathas-hint-mini,body.light .mathas-hint-mini{color:#526d7a}
+body.light-mode .mathas-hint-target-label,body.light .mathas-hint-target-label{background:rgba(255,255,255,.96)}
+
+/* ---------- Réglages d'aides du Master ---------- */
+.master-aid-controls{margin-top:8px;padding:9px 10px;border-radius:12px;border:1px solid rgba(125,211,252,.15);background:rgba(255,255,255,.025)}
+.master-aid-controls[hidden]{display:none!important}
+.master-aid-title{font-size:.7rem;font-weight:1000;letter-spacing:.045em;text-transform:uppercase;color:#9fdff0;margin-bottom:6px}
+.master-aid-grid{display:grid;grid-template-columns:1fr;gap:5px}
+.master-aid-check{display:flex;align-items:center;gap:7px;font-size:.72rem;font-weight:800;color:#d9edf4;cursor:pointer}
+.master-aid-check input{width:17px;height:17px;accent-color:#ef6a6a}
+.master-aid-note{margin-top:6px;font-size:.63rem;line-height:1.3;color:#9ab4bf}
+.master-aid-blocked{display:none!important}
+body.light-mode .master-aid-check,body.light .master-aid-check{color:#294957}
+body.light-mode .master-aid-note,body.light .master-aid-note{color:#607985}
+
+/* Multi multiple : les paires chiffre/ligne peuvent recevoir une couleur propre. */
+.m2-partial-block.mathas-hint-pair{padding:2px 0;border-radius:10px}
+@media(max-width:700px){.mathas-hint-card{font-size:.86rem}.mathas-hint-demo{font-size:1.25rem}.mathas-hint-card.large{font-size:1.32rem;padding:20px}}
+</style>
+
 </head>
 <body>
 <button class="fullscreen-btn" id="fullscreenBtn" type="button" aria-pressed="false" title="Mettre l’application en plein écran">⛶ Plein écran</button>
@@ -3810,7 +3979,7 @@ header{padding-right:175px !important}
   <h1>Soustraction écrite</h1>
   <div class="subtitle-row">
   <p class="subtitle">Deux calculs à la fois, avec saisie chiffre par chiffre.</p>
-  <span class="app-version">v2.10</span>
+  <span class="app-version">v2.13</span>
 </div>
 </header>
 
@@ -4247,7 +4416,8 @@ function enregistrerResultatMathas(score, total, niveau, niveauRang) {
     }
   }
   function markRulerUsed(){
-    // Réglette purement visuelle : aucune influence sur le score.
+    // L’aide ne modifie pas le score ; elle ajoute seulement le petit indicateur 💡.
+    if(session){session.rulerUsed=true;updateBar()}
   }
   function updateScoreRuler(){
     if(!session)return;
@@ -4267,7 +4437,7 @@ function enregistrerResultatMathas(score, total, niveau, niveauRang) {
         const w=Math.ceil(scoreRuler.getBoundingClientRect().width);
         document.documentElement.style.setProperty('--count-ruler-space',`${w+18}px`)
       });
-      setFeedback('📏 Réglette de comptage affichée.','info')
+      markRulerUsed();setFeedback('📏 Réglette de comptage affichée.','info')
     }else{
       document.documentElement.style.removeProperty('--count-ruler-space')
     }
@@ -4433,10 +4603,13 @@ function enregistrerResultatMathas(score, total, niveau, niveauRang) {
 
   function makePair(){
     removeCelebrations();resetHintTracker();
-    states=[newState(),newState()];phase='answering';active={kind:'answer',calc:0,col:0,replace:false};
+    states=[newState(),newState()];
+    if(session.mode==='training')for(let k=0;k<2;k++){let guard=0;while(!(borrowPattern(states[k].top,states[k].bottom,states[k].count)||[])[0]&&guard++<160)states[k]=newState()}
+    if(states[0]&&states[1]&&states[0].top===states[1].top&&states[0].bottom===states[1].bottom)states[1]=newState();
+    phase='answering';active={kind:'answer',calc:0,col:0,replace:false};
     calculationsPair.innerHTML='';states.forEach((s,i)=>renderCalc(s,i));
     setPrimaryActionLabel('Valider');resetBtn.disabled=false;setNumpadDisabled(false);
-    hintBtn.classList.remove('hidden');hintBtn.disabled=false;
+    hintBtn.classList.remove('hidden');hintBtn.disabled=false;hintBtn.textContent=session.mode==='training'?'💡 Indice 1/4':'💡 Indice';
     setFeedback('Réponds aux deux calculs, puis vérifie.','');updateBar();focusInput(0,0)
   }
 
@@ -4761,15 +4934,14 @@ function enregistrerResultatMathas(score, total, niveau, niveauRang) {
 
 
   let hintTracker={calc:-1,col:-1,step:0};
+  let trainingHintStep=0;
   let compareHintVisible=false;
 
   function clearHintVisuals(){
-    calculationsPair.querySelectorAll('.hint-target,.hint-bottom,.hint-borrow,.hint-adjust,.hint-answer').forEach(el=>{
-      el.classList.remove('hint-target','hint-bottom','hint-borrow','hint-adjust','hint-answer')
-    });
-    scoreRulerBtn.classList.remove('hint-ruler')
+    calculationsPair.querySelectorAll('.hint-target,.hint-bottom,.hint-borrow,.hint-adjust,.hint-answer').forEach(el=>{el.classList.remove('hint-target','hint-bottom','hint-borrow','hint-adjust','hint-answer')});
+    scoreRulerBtn.classList.remove('hint-ruler');window.MathasHints?.clear()
   }
-  function resetHintTracker(){hintTracker={calc:-1,col:-1,step:0};compareHintVisible=false;clearHintVisuals();clearCompareHintVisuals()}
+  function resetHintTracker(){hintTracker={calc:-1,col:-1,step:0};trainingHintStep=0;compareHintVisible=false;clearHintVisuals();clearCompareHintVisuals();if(hintBtn)hintBtn.textContent=session?.mode==='training'?'💡 Indice 1/4':'💡 Indice'}
   function currentHintCalc(){
     if(states[active.calc]&&!states[active.calc].solved)return active.calc;
     const i=states.findIndex(s=>!s.solved);return i>=0?i:0
@@ -4804,31 +4976,16 @@ function enregistrerResultatMathas(score, total, niveau, niveauRang) {
     return{top,bottom}
   }
   function renderCompareHint(){
-    clearCompareHintVisuals();
-    if(!compareHintVisible||!session||phase!=='answering')return;
-    const info=comparisonColumn();
-    if(!info)return;
-    const {i,s,c}=info,op=opFor(i);
-    if(!op)return;
-    const top=op.querySelector(`[data-top-col="${c}"]`);
-    const bottom=op.querySelector(`[data-bottom-col="${c}"]`);
-    if(!top||!bottom)return;
-    const values=effectiveCompareValues(s,c);
-    if(values.top>values.bottom){
-      top.classList.add('compare-larger');
-      bottom.classList.add('compare-smaller');
-    }else if(values.top<values.bottom){
-      top.classList.add('compare-smaller');
-      bottom.classList.add('compare-larger');
-    }
-    calculationsPair.classList.add('compare-hint-visible');
+    clearCompareHintVisuals();if(!compareHintVisible||!session||phase!=='answering')return;const info=comparisonColumn();if(!info)return;
+    const {i,c}=info,op=opFor(i);if(!op)return;const top=op.querySelector(`[data-top-col="${c}"]`),bottom=op.querySelector(`[data-bottom-col="${c}"]`);if(!top||!bottom)return;
+    top.classList.add('compare-larger');bottom.classList.add('compare-smaller');calculationsPair.classList.add('compare-hint-visible')
   }
   function toggleCompareHint(){
     if(!session||phase!=='answering')return;
     compareHintVisible=!compareHintVisible;
     if(compareHintVisible){
       renderCompareHint();
-      setFeedback('💡 Compare les deux chiffres de la colonne : repère simplement le plus grand et le plus petit.','info');
+      setFeedback('💡 Compare : le chiffre du dessus est-il plus grand ? Celui du dessous est-il plus petit ?','info');
     }else{
       clearCompareHintVisuals();
       setFeedback('','');
@@ -4836,61 +4993,13 @@ function enregistrerResultatMathas(score, total, niveau, niveauRang) {
   }
 
   function showTrainingHint(){
-    if(!session||session.mode!=='training'||phase!=='answering')return;
-    clearHintVisuals();
-
-    const i=currentHintCalc(),s=states[i],op=opFor(i);
-    if(!s||!op)return;
-
-    // Si l'élève est précisément dans la petite case du -1, on garde une aide directe.
-    if(active.kind==='adjust'&&active.calc===i){
-      const c=active.col,top=op.querySelector(`[data-top-col="${c}"]`),a=adjustmentFor(i,c);
-      if(top)top.classList.add('hint-target');
-      if(a)a.classList.add('hint-adjust');
-      setFeedback('💡 Tu as emprunté 1 à ce chiffre : écris maintenant sa nouvelle valeur dans la petite case.','info');
-      return
-    }
-
-    let c=(active.calc===i&&active.kind==='answer')?active.col:0;
-    c=Math.max(0,Math.min(c,s.count-1));
-
-    if(hintTracker.calc===i&&hintTracker.col===c)hintTracker.step=Math.min(3,hintTracker.step+1);
-    else hintTracker={calc:i,col:c,step:1};
-
-    const top=op.querySelector(`[data-top-col="${c}"]`);
-    const bottom=op.querySelector(`[data-bottom-col="${c}"]`);
-    const answer=inputFor(i,c);
-    const pattern=borrowPattern(s.top,s.bottom,s.count)||[];
-    const needsBorrow=!!pattern[c];
-
-    // 1) Comparer les deux chiffres.
-    if(hintTracker.step===1){
-      if(top)top.classList.add('hint-target');
-      if(bottom)bottom.classList.add('hint-bottom');
-      setFeedback('💡 Regarde cette colonne : le chiffre du dessus est-il assez grand pour enlever celui du dessous ?','info');
-      return
-    }
-
-    // 2) Donner seulement l'action utile : emprunter si nécessaire,
-    // sinon encourager à calculer directement.
-    if(hintTracker.step===2){
-      if(needsBorrow&&c<s.count-1&&!s.borrowed[c]){
-        const borrow=op.querySelector(`.borrow-cell[data-col="${c}"]`);
-        if(borrow)borrow.classList.add('hint-borrow');
-        setFeedback('💡 Ici, le chiffre du dessus est trop petit : fais un emprunt en touchant la case indiquée pour faire apparaître 10.','info');
-      }else if(s.borrowed[c]){
-        if(answer)answer.classList.add('hint-answer');
-        setFeedback('💡 L’emprunt est déjà fait. Utilise maintenant le 10 et calcule cette colonne.','info');
-      }else{
-        if(answer)answer.classList.add('hint-answer');
-        setFeedback('💡 Pas besoin d’emprunt dans cette colonne : tu peux faire la soustraction directement.','info');
-      }
-      return
-    }
-
-    // 3) Dernier recours : proposer la réglette 0–20.
-    scoreRulerBtn.classList.add('hint-ruler');
-    setFeedback('💡 Si tu hésites encore, affiche la réglette 0–20 : elle peut t’aider à comparer les nombres et à trouver l’écart. Dans les modes avec score, un score souligné dans le menu indique que la réglette a été utilisée.','info')
+    if(!session||session.mode!=='training'||phase!=='answering')return;clearHintVisuals();clearCompareHintVisuals();compareHintVisible=false;trainingHintStep=trainingHintStep%4+1;hintBtn.textContent=`💡 Indice ${trainingHintStep}/4`;
+    const i=currentHintCalc(),s=states[i],op=opFor(i),H=window.MathasHints;if(!s||!op||!H)return;const pattern=borrowPattern(s.top,s.bottom,s.count)||[];let c=pattern.findIndex(Boolean);if(c<0)c=0;const top=op.querySelector(`[data-top-col="${c}"]`),bottom=op.querySelector(`[data-bottom-col="${c}"]`),answer=inputFor(i,c),borrow=op.querySelector(`.borrow-cell[data-col="${c}"]`),donorTop=op.querySelector(`[data-top-col="${Math.min(c+1,s.count-1)}"]`),donorBottom=op.querySelector(`[data-bottom-col="${Math.min(c+1,s.count-1)}"]`);
+    if(trainingHintStep===1){top?.classList.add('compare-larger');bottom?.classList.add('compare-smaller');calculationsPair.classList.add('compare-hint-visible');H.mark(top,'#4ade80');H.mark(bottom,'#fb7185');H.show({title:'Indice 1/4',anchor:op,html:'<strong>Compare les deux chiffres de la colonne.</strong>'});setFeedback('💡 Compare les deux chiffres de la colonne.','info');return}
+    const selected=session.borrowMethod,methodText=selected==='addBottom'?'Ajoute 10 en haut, puis +1 en bas à gauche.':'Ajoute 10 en haut, puis retire 1 au chiffre du haut à gauche.';
+    if(trainingHintStep===2){const donor=selected==='addBottom'?donorBottom:donorTop,label=selected==='addBottom'?'+1':'−1';H.mark(top,'#22d3ee');H.mark(bottom,'#fb7185');H.mark(borrow,'#fbbf24');H.mark(donor,'#fbbf24');H.show({title:'Indice 2/4',anchor:op,html:`<strong>Technique choisie :</strong> ${methodText}<div class="mathas-hint-demo" style="font-size:1.05rem"><span class="hint-tens" data-hint-source="ten">+10</span><span>puis</span><span class="hint-tens" data-hint-source="donor">${label}</span></div>`,targets:[{source:'ten',el:borrow,color:'#fbbf24',label:'+10'},{source:'donor',el:donor,color:'#fbbf24',label}]});setFeedback(`💡 ${methodText}`,'info');return}
+    if(trainingHintStep===3){const other=selected==='addBottom'?'Ajoute 10 en haut, puis retire 1 au chiffre du haut à gauche.':'Ajoute 10 en haut, puis +1 en bas à gauche.',donor=selected==='addBottom'?donorTop:donorBottom,label=selected==='addBottom'?'−1':'+1';H.mark(top,'#22d3ee');H.mark(borrow,'#fbbf24');H.mark(donor,'#a78bfa');H.show({title:'Indice 3/4',anchor:op,html:`<strong>On peut aussi faire comme cela :</strong> ${other}<div class="mathas-hint-demo" style="font-size:1.05rem"><span class="hint-tens" data-hint-source="ten">+10</span><span>puis</span><span class="hint-tens" data-hint-source="donor">${label}</span></div>`,targets:[{source:'ten',el:borrow,color:'#fbbf24',label:'+10'},{source:'donor',el:donor,color:'#a78bfa',label}]});setFeedback(`💡 On peut aussi faire comme cela : ${other}`,'info');return}
+    const tv=s.topDigits[c]+10,bv=s.bottomDigits[c]||0,res=tv-bv;H.mark(top,'#4ade80');H.mark(bottom,'#fb7185');H.mark(answer,'#22d3ee');H.show({title:'Indice 4/4',anchor:op,html:`<div class="mathas-hint-demo">${tv} − ${bv} = <span class="hint-result"><span class="hint-units" data-hint-source="units">${res}</span></span></div><div class="mathas-hint-note">Maintenant, soustrais cette colonne.</div>`,targets:[{source:'units',el:answer,color:'#22d3ee',label:'réponse'}]});setFeedback('💡 Maintenant, soustrais cette colonne.','info')
   }
 
   function evaluateCalc(i){
@@ -5179,7 +5288,7 @@ function enregistrerResultatMathas(score, total, niveau, niveauRang) {
     }
   }
 
-  function updateBar(){
+  function updateBar(){sessionScoreEl.classList.toggle('aid-used-score',!!session?.rulerUsed);
     sessionLevelEl.textContent=`Niveau ${session.level}`;
     if(session.mode==='classic'){
       sessionModeEl.textContent='🔢 Calculs';
@@ -5212,7 +5321,7 @@ function enregistrerResultatMathas(score, total, niveau, niveauRang) {
   startSudden.addEventListener('click',()=>startSession('sudden'));
   startTraining.addEventListener('click',()=>startSession('training'));
   menuBtn.addEventListener('click',goMenu);scoreRulerBtn.addEventListener('click',toggleScoreRuler);primaryBtn.addEventListener('click',handlePrimary);resetBtn.addEventListener('click',resetCurrent);
-  hintBtn.addEventListener('click',toggleCompareHint);
+  hintBtn.addEventListener('click',()=>{if(session?.mode==='training')showTrainingHint();else toggleCompareHint()});
   classicMaxDigits.addEventListener('change',saveSettings);
   suddenMaxDigits.addEventListener('change',saveSettings);
   trainingMaxDigits.addEventListener('change',saveSettings);
@@ -5546,6 +5655,29 @@ function enregistrerResultatMathas(score, total, niveau, niveauRang) {
   const calcLabel=document.getElementById('hardCalcLabel');
 
   let hardSession=null, hardState=null, hardActive=null, hardPhase='answering';
+  const HARD_SERIES_KEY="hard_series3_soustraction_v1";
+  function hardSeriesStore(){return safeGet(HARD_SERIES_KEY,{})}
+  function hardSeriesBest(level){const n=Number(hardSeriesStore()[String(level)]);return Number.isFinite(n)?Math.max(0,Math.min(3,n)):0}
+  function hardSeriesOpen(level){return !!window.__masterMode||level===1||hardSeriesBest(level-1)>=3}
+  function hardSuddenOpen(level){return !!window.__masterMode||hardSeriesBest(level)>=3}
+  function saveHardSeriesScore(level,score){
+    const d=hardSeriesStore(),k=String(level),old=Number(d[k]||0),best=Math.max(old,score);
+    if(best!==old){d[k]=best;safeSet(HARD_SERIES_KEY,d)}
+    return old<3&&best>=3
+  }
+  function showHardSeriesUnlock(level){
+    const items=[`⚡ Mort subite HARD LVL ${level} débloquée !`];
+    if(level<3)items.push(`🔥 HARD LVL ${level+1} · 3 calculs débloqués !`);
+    let delay=0;
+    items.forEach(text=>{setTimeout(()=>{
+      document.querySelectorAll('.hard-series-unlock-layer').forEach(x=>x.remove());
+      const layer=document.createElement('div');layer.className='hard-series-unlock-layer';
+      const card=document.createElement('div');card.className='hard-series-unlock-card';
+      card.innerHTML=`${text}<small>Progression HARD mise à jour</small>`;layer.appendChild(card);document.body.appendChild(layer);
+      setTimeout(()=>layer.remove(),1900)
+    },delay);delay+=2100})
+  }
+
 
   function bestStore(){return safeGet(CFG.storage,{})}
   function saveBest(){
@@ -5559,6 +5691,7 @@ function enregistrerResultatMathas(score, total, niveau, niveauRang) {
     const records=bestStore();
     levelGrid.innerHTML='';
     CFG.levels.forEach(l=>{
+      const series=hardSeriesBest(l.level),seriesLocked=!hardSeriesOpen(l.level),suddenLocked=!hardSuddenOpen(l.level);
       const card=el('article','hard-level-card');
       card.innerHTML=`
         <h3>HARD LVL ${l.level}</h3>
@@ -5568,8 +5701,8 @@ function enregistrerResultatMathas(score, total, niveau, niveauRang) {
           <span class="hard-record-value">${Number.isFinite(Number(records[String(l.level)]))?records[String(l.level)]:'—'}</span>
         </div>
         <div class="hard-mode-buttons">
-          <button type="button" class="hard-start" data-level="${l.level}" data-mode="training">🧠 Entraînement</button>
-          <button type="button" class="hard-start" data-level="${l.level}" data-mode="sudden">⚡ Mort subite</button>
+          <button type="button" class="hard-start" data-level="${l.level}" data-mode="training" ${seriesLocked?'disabled':''}>${seriesLocked?'🔒 ':''}3 calculs · <span class="hard-series-score">${series}/3</span>${seriesLocked?' (bloqué)':''}</button>
+          <button type="button" class="hard-start" data-level="${l.level}" data-mode="sudden" ${suddenLocked?'disabled':''}>${suddenLocked?'🔒 ':''}⚡ Mort subite${suddenLocked?' (bloquée → 3/3)':''}</button>
         </div>`;
       levelGrid.appendChild(card)
     })
@@ -5697,9 +5830,11 @@ function enregistrerResultatMathas(score, total, niveau, niveauRang) {
   }
 
   function startHard(spec,mode){
+    if(mode==='training'&&!hardSeriesOpen(spec.level))return;
+    if(mode==='sudden'&&!hardSuddenOpen(spec.level))return;
     hardSession={
       level:spec.level,digits:spec.digits,addends:spec.addends,mode,
-      score:0,completed:0,spec
+      score:0,completed:0,spec,currentFirstTry:true
     };
     hardMenu.classList.add('hidden');
     hardGame.classList.remove('hidden');
@@ -5708,7 +5843,7 @@ function enregistrerResultatMathas(score, total, niveau, niveauRang) {
     window.scrollTo({top:0,behavior:'smooth'})
   }
   function newHardCalc(){
-    hardPhase='answering';
+    hardPhase='answering';hardSession.currentFirstTry=true;
     hardState=CFG.type==='addition'?additionState(hardSession.spec):subtractionState(hardSession.spec);
     hardActive={kind:'answer',col:0};
     renderHardCalc();
@@ -5721,11 +5856,11 @@ function enregistrerResultatMathas(score, total, niveau, niveauRang) {
   }
   function updateHardHeader(){
     titleEl.textContent=`${CFG.title} · HARD LVL ${hardSession.level}`;
-    metaEl.textContent=`${hardSession.mode==='training'?'🧠 Entraînement':'⚡ Mort subite'} · ${levelSpec(hardSession.spec)} · 1 calcul à la fois`;
+    metaEl.textContent=`${hardSession.mode==='training'?'🎯 3 calculs':'⚡ Mort subite'} · ${levelSpec(hardSession.spec)} · 1 calcul à la fois`;
     const sudden=hardSession.mode==='sudden';
-    scoreEl.textContent=sudden?`Score ${hardSession.score}`:'Sans points';
-    scoreEl.classList.toggle('no-score',!sudden);
-    counterEl.textContent=hardPhase==='ended'?`Calculs : ${hardSession.completed}`:`Calcul ${hardSession.completed+1}`;
+    scoreEl.textContent=sudden?`Score ${hardSession.score}`:`Score ${hardSession.score} / 3`;
+    scoreEl.classList.toggle('no-score',false);
+    counterEl.textContent=hardPhase==='ended'?`Calculs : ${hardSession.completed}`:`Calcul ${Math.min(hardSession.completed+1,hardSession.mode==='training'?3:999)}${hardSession.mode==='training'?' / 3':''}`;
   }
   function setFeedback(t,type){
     feedback.textContent=t;feedback.className=`hard-feedback${type?' '+type:''}`
@@ -6063,28 +6198,27 @@ function enregistrerResultatMathas(score, total, niveau, niveauRang) {
     const r=evaluateHard();
     if(!r.filled){
       setFeedback('Termine le calcul avant de vérifier.','info');
-      const m=firstMissing();if(m)focusHard(m.kind,m.col);
-      return
+      const m=firstMissing();if(m)focusHard(m.kind,m.col);return
     }
     if(r.correct){
-      markAllGood();
-      hardSession.completed++;
+      markAllGood();hardSession.completed++;
       if(hardSession.mode==='sudden'){hardSession.score++;saveBest()}
-      hardPhase='review';setHardEnabled(false);clearBtn.disabled=true;
-      primary.textContent='Calcul suivant';
-      setFeedback(hardSession.mode==='sudden'?`Correct. Score : ${hardSession.score}.`:'Correct. Tu peux passer au calcul suivant.','ok');
-      updateHardHeader();
-      return
+      else if(hardSession.currentFirstTry)hardSession.score++;
+      if(hardSession.mode==='training'&&hardSession.completed>=3){
+        const newlyPerfect=saveHardSeriesScore(hardSession.level,hardSession.score);
+        hardPhase='ended';setHardEnabled(false);clearBtn.disabled=true;primary.textContent='Retour au menu HARD';
+        setFeedback(`Série terminée : ${hardSession.score} / 3.`,hardSession.score===3?'ok':'info');updateHardHeader();
+        if(newlyPerfect)showHardSeriesUnlock(hardSession.level);return
+      }
+      hardPhase='review';setHardEnabled(false);clearBtn.disabled=true;primary.textContent='Calcul suivant';
+      setFeedback(hardSession.mode==='sudden'?`Correct. Score : ${hardSession.score}.`:`Correct. Score : ${hardSession.score} / 3.`,'ok');updateHardHeader();return
     }
-    markHardErrors();
+    hardSession.currentFirstTry=false;markHardErrors();
     if(hardSession.mode==='sudden'){
       saveBest();window.__setLastWork&&window.__setLastWork({label:`HARD LVL ${hardSession.level} · Mort subite · ${hardSession.digits} chiffres`,score:String(hardSession.score)});enregistrerResultatMathas(hardSession.score,hardSession.score+1,`Hard ${hardSession.level}`,3+hardSession.level);hardPhase='ended';setHardEnabled(false);clearBtn.disabled=true;
-      primary.textContent='Retour au menu HARD';
-      setFeedback(`Erreur : Mort subite terminée. Score : ${hardSession.score}.`,'bad');
-      updateHardHeader()
+      primary.textContent='Retour au menu HARD';setFeedback(`Erreur : Mort subite terminée. Score : ${hardSession.score}.`,'bad');updateHardHeader()
     }else{
-      setFeedback('Corrige les cases rouges, puis vérifie à nouveau.','bad');
-      const m=firstMissing();if(m)focusHard(m.kind,m.col)
+      setFeedback('Corrige les cases rouges : ce calcul ne rapportera plus de point.','bad');const m=firstMissing();if(m)focusHard(m.kind,m.col)
     }
   }
 })();
@@ -6579,7 +6713,7 @@ function enregistrerResultatMathas(score, total, niveau, niveauRang) {
   const status=document.getElementById('masterModeStatus');
   const reset=document.getElementById('masterModeReset');
   const resetNote=document.getElementById('masterModeResetNote');
-  const MASTER_RESET_KEYS=["soustraction_classic20_v6", "soustraction_last_work", "mathas_progression_soustraction_ecrite_v1"];
+  const MASTER_RESET_KEYS=["soustraction_classic20_v6", "soustraction_last_work", "mathas_progression_soustraction_ecrite_v1", "hard_series3_soustraction_v1"];
 
   function syncMasterUI(message=''){
     const active=!!window.__masterMode;
@@ -6635,6 +6769,156 @@ function enregistrerResultatMathas(score, total, niveau, niveauRang) {
   });
   syncMasterUI();
   refreshLocks();
+})();
+</script>
+
+
+<script id="menuLeftPatchScript">
+(()=>{
+  const btn=document.getElementById('menuBtn');
+  const bar=btn?.closest('.session-bar');
+  const mode=bar?.querySelector('.session-mode');
+  if(btn&&bar&&mode){
+    btn.textContent='← Menu';
+    btn.classList.add('menu-left');
+    bar.insertBefore(btn,mode);
+  }
+})();
+</script>
+
+
+<script id="qualityProgressScript">
+(()=>{
+  const PROG="mathas_progression_soustraction_ecrite_v1";
+  const HARD="hard_series3_soustraction_v1";
+  const read=(k)=>{try{const v=JSON.parse(localStorage.getItem(k));return v&&typeof v==='object'?v:{}}catch{return {}}};
+  function render(){
+    const menu=document.getElementById('menuScreen');
+    if(!menu)return;
+    let card=document.getElementById('qualityProgressCard');
+    if(!card){
+      card=document.createElement('div');
+      card.id='qualityProgressCard';
+      card.className='quality-progress-card';
+      const first=menu.firstElementChild;
+      if(first)menu.insertBefore(card,first);else menu.appendChild(card);
+    }
+    const p=read(PROG),h=read(HARD);
+    const levels=[1,2,3].map(n=>{
+      const ok=!!p['sudden'+n];
+      return `<span class="quality-progress-pill ${ok?'ok':'todo'}">Niv${n} 80% ${ok?'✓':'·'}</span>`;
+    }).join('');
+    const hardOk=!!p.hard;
+    const hs=[1,2,3].map(n=>`${n}:${Math.max(0,Math.min(3,Number(h[String(n)]||0)))}/3`).join(' · ');
+    card.innerHTML=`<div class="quality-progress-title">Progression</div><div class="quality-progress-line">${levels}<span class="quality-progress-pill ${hardOk?'ok':'todo'}">HARD ${hardOk?'✓':'🔒'}</span></div><div class="quality-progress-hard">HARD — ${hs}</div>`;
+  }
+  window.__refreshQualityProgress=render;
+  const menu=document.getElementById('menuScreen');
+  if(menu)new MutationObserver(()=>{if(!menu.classList.contains('hidden'))render()}).observe(menu,{attributes:true,attributeFilter:['class']});
+  window.addEventListener('focus',render);
+  document.addEventListener('click',()=>setTimeout(render,80));
+  setTimeout(render,0);
+})();
+</script>
+
+
+<script id="progressiveHintLibrary">
+(()=>{
+  const touched=new Set();
+  let layer=null,svg=null,card=null;
+  function cleanClasses(){
+    touched.forEach(el=>{if(!el||!el.classList)return;el.classList.remove('mathas-hint-focus','mathas-hint-muted','mathas-hint-pair');el.style.removeProperty('--hint-color');el.removeAttribute('data-mathas-hint-touched')});
+    touched.clear();
+  }
+  function clearLayer(){if(layer)layer.remove();layer=null;svg=null;card=null;document.querySelectorAll('.mathas-hint-layer').forEach(x=>x.remove())}
+  function clear(){clearLayer();cleanClasses()}
+  function touch(el){if(!el)return null;touched.add(el);el.setAttribute('data-mathas-hint-touched','1');return el}
+  function mark(el,color='#22d3ee',pair=false){if(!el)return;touch(el);el.style.setProperty('--hint-color',color);el.classList.add(pair?'mathas-hint-pair':'mathas-hint-focus')}
+  function mute(elements,keep=[]){const ks=new Set((keep||[]).filter(Boolean));[...(elements||[])].forEach(el=>{if(!el||ks.has(el))return;touch(el);el.classList.add('mathas-hint-muted')})}
+  function placeCard(anchor){
+    if(!card)return;const pad=12,w=card.offsetWidth,h=card.offsetHeight;const vw=innerWidth,vh=innerHeight;
+    let left=Math.max(pad,(vw-w)/2),top=82;
+    if(anchor&&anchor.getBoundingClientRect){const r=anchor.getBoundingClientRect();const rightSpace=vw-r.right,leftSpace=r.left;
+      if(rightSpace>w+26){left=Math.min(vw-w-pad,r.right+14);top=Math.max(70,Math.min(vh-h-pad,r.top))}
+      else if(leftSpace>w+26){left=Math.max(pad,r.left-w-14);top=Math.max(70,Math.min(vh-h-pad,r.top))}
+      else if(r.top>h+90){left=Math.max(pad,Math.min(vw-w-pad,r.left+r.width/2-w/2));top=Math.max(72,r.top-h-16)}
+      else{left=Math.max(pad,Math.min(vw-w-pad,r.left+r.width/2-w/2));top=Math.min(vh-h-pad,r.bottom+14)}
+    }
+    card.style.left=`${Math.round(left)}px`;card.style.top=`${Math.round(top)}px`
+  }
+  function arrow(fromEl,toEl,color='#22d3ee'){
+    if(!svg||!fromEl||!toEl)return;const a=fromEl.getBoundingClientRect(),b=toEl.getBoundingClientRect();if(!a.width&&!a.height||!b.width&&!b.height)return;
+    const x1=a.left+a.width/2,y1=a.top+a.height/2,x2=b.left+b.width/2,y2=b.top+b.height/2;
+    const id='mh'+Math.random().toString(36).slice(2);const defs=document.createElementNS('http://www.w3.org/2000/svg','defs');
+    const marker=document.createElementNS('http://www.w3.org/2000/svg','marker');marker.setAttribute('id',id);marker.setAttribute('markerWidth','8');marker.setAttribute('markerHeight','8');marker.setAttribute('refX','7');marker.setAttribute('refY','3.5');marker.setAttribute('orient','auto');
+    const poly=document.createElementNS('http://www.w3.org/2000/svg','polygon');poly.setAttribute('points','0 0, 8 3.5, 0 7');poly.setAttribute('fill',color);marker.appendChild(poly);defs.appendChild(marker);svg.appendChild(defs);
+    const path=document.createElementNS('http://www.w3.org/2000/svg','path');const dx=x2-x1,dy=y2-y1;const cx=x1+dx*.52,cy=y1+dy*.18-18;path.setAttribute('d',`M ${x1} ${y1} Q ${cx} ${cy} ${x2} ${y2}`);path.setAttribute('fill','none');path.setAttribute('stroke',color);path.setAttribute('stroke-width','3');path.setAttribute('stroke-linecap','round');path.setAttribute('opacity','.88');path.setAttribute('marker-end',`url(#${id})`);svg.appendChild(path)
+  }
+  function labelTarget(el,text,color='#22d3ee'){if(!layer||!el||!text)return;const r=el.getBoundingClientRect(),lab=document.createElement('div');lab.className='mathas-hint-target-label';lab.textContent=text;lab.style.setProperty('--hint-color',color);lab.style.left=`${r.left+r.width/2}px`;lab.style.top=`${Math.max(18,r.top)}px`;layer.appendChild(lab)}
+  function show({title='Indice',html='',anchor=null,targets=[],connections=[],large=false}={}){
+    clearLayer();layer=document.createElement('div');layer.className='mathas-hint-layer';
+    svg=document.createElementNS('http://www.w3.org/2000/svg','svg');svg.setAttribute('aria-hidden','true');layer.appendChild(svg);
+    card=document.createElement('div');card.className=`mathas-hint-card${large?' large':''}`;card.innerHTML=`${large?'':`<div class="mathas-hint-title">${title}</div>`}${html}`;layer.appendChild(card);document.body.appendChild(layer);placeCard(anchor);
+    requestAnimationFrame(()=>{placeCard(anchor);requestAnimationFrame(()=>{
+      (targets||[]).forEach(t=>{const src=card.querySelector(`[data-hint-source="${t.source}"]`);if(src&&t.el)arrow(src,t.el,t.color||'#22d3ee');if(t.el&&t.label)labelTarget(t.el,t.label,t.color||'#22d3ee')});
+      (connections||[]).forEach(c=>{if(c.from&&c.to)arrow(c.from,c.to,c.color||'#22d3ee')})
+    })});
+    return card
+  }
+  window.MathasHints={clear,mark,mute,show,connect:(from,to,color)=>{if(svg)arrow(from,to,color)},label:labelTarget};
+  window.addEventListener('resize',clear,{passive:true});window.addEventListener('scroll',clear,{passive:true});
+  document.addEventListener('pointerdown',e=>{if(e.target.closest('.numpad,.hard-numpad,.controls,#primaryBtn,#resetBtn,#clearBtn,#menuBtn'))clear()},true)
+})();
+</script>
+
+
+<script id="masterAidRestrictionsScript">
+(()=>{
+  const CFG=[{"key": "ruler", "label": "Bloquer la réglette"}, {"key": "compareHint", "label": "Bloquer l’indice plus grand?/plus petit?"}, {"key": "trainingHints", "label": "Bloquer les indices d’entraînement"}];
+  const KEY='mathas_master_aid_locks_v1_'+window.location.pathname.toLowerCase();
+  const panel=document.getElementById('masterModePanel');if(!panel)return;
+  let state={};try{state=JSON.parse(sessionStorage.getItem(KEY)||'{}')||{}}catch{state={}}
+  const save=()=>{try{sessionStorage.setItem(KEY,JSON.stringify(state))}catch{}};
+  const wrap=document.createElement('div');wrap.id='masterAidControls';wrap.className='master-aid-controls';wrap.hidden=true;
+  wrap.innerHTML='<div class="master-aid-title">Aides autorisées / bloquées</div><div class="master-aid-grid"></div><div class="master-aid-note">Coche une aide pour la bloquer. Le réglage reste actif dans cet onglet, même si tu désactives ensuite le Master mode.</div>';
+  const grid=wrap.querySelector('.master-aid-grid');
+  CFG.forEach(c=>{const lab=document.createElement('label');lab.className='master-aid-check';lab.innerHTML=`<input type="checkbox" data-aid-lock="${c.key}"><span>${c.label}</span>`;const inp=lab.querySelector('input');inp.checked=!!state[c.key];inp.addEventListener('change',()=>{state[c.key]=inp.checked;save();apply()});grid.appendChild(lab)});
+  const activeRow=document.getElementById('masterModeActiveRow');if(activeRow)activeRow.insertAdjacentElement('afterend',wrap);else panel.appendChild(wrap);
+  const blocked=k=>!!state[k];
+  const hide=(sel,on)=>document.querySelectorAll(sel).forEach(el=>el.classList.toggle('master-aid-blocked',!!on));
+  const training=()=>{const t=(document.getElementById('sessionMode')?.textContent||document.getElementById('progressPill')?.textContent||'');return /Entraînement|Sans points/.test(t)};
+  function closeVisuals(){
+    if(blocked('ruler')){document.getElementById('scoreRuler')?.classList.add('hidden');document.body.classList.remove('count-ruler-open')}
+    if(blocked('tables')){document.getElementById('tablesPanel')?.classList.add('hidden');document.body.classList.remove('tables-open');const ap=document.getElementById('aidPanel');if(ap&&currentMixAid()==='tables'){ap.classList.add('hidden');document.body.classList.remove('aid-open')}}
+    if(blocked('ruler')){const ap=document.getElementById('aidPanel');if(ap&&currentMixAid()==='ruler'){ap.classList.add('hidden');document.body.classList.remove('aid-open')}}
+    if(blocked('guide')){const gb=document.getElementById('guideBtn');if(gb&&/ON/.test(gb.textContent))gb.click();const gt=document.getElementById('guideToggle');if(gt&&gt.checked){gt.checked=false;gt.dispatchEvent(new Event('change',{bubbles:true}))}}
+  }
+  function currentMixAid(){const active=document.querySelector('#pair .active-entry')?.closest('.calc-box')||document.querySelector('#pair .calc-box:not(.waiting)');return active?.classList.contains('mul')?'tables':'ruler'}
+  function apply(){
+    const isTraining=training();
+    if("sub"==='add1'||"sub"==='add2'){hide('#scoreRulerBtn',blocked('ruler'));hide('#hintBtn',isTraining&&blocked('trainingHints'))}
+    else if("sub"==='sub'){hide('#scoreRulerBtn',blocked('ruler'));hide('#hintBtn',isTraining?blocked('trainingHints'):blocked('compareHint'))}
+    else if("sub"==='mul1'){hide('#tablesBtn',blocked('tables'));hide('#hintBtn',isTraining&&blocked('trainingHints'))}
+    else if("sub"==='mul2'){hide('#tablesBtn',blocked('tables'));hide('#guideBtn,#hardGuideBtn,.toggle-guide-option',blocked('guide'));hide('#hintBtn',isTraining&&blocked('trainingHints'))}
+    else if("sub"==='mix'){const k=currentMixAid();hide('#aidBtn',(k==='tables'&&blocked('tables'))||(k==='ruler'&&blocked('ruler')));hide('#hintBtn',isTraining&&blocked('trainingHints'))}
+    closeVisuals();wrap.hidden=!window.__masterMode
+  }
+  document.addEventListener('click',e=>{
+    const t=e.target.closest('#scoreRulerBtn,#tablesBtn,#guideBtn,#hardGuideBtn,#hintBtn,#aidBtn,.toggle-guide-option');if(!t)return;
+    let deny=false;
+    if(t.matches('#scoreRulerBtn'))deny=blocked('ruler');
+    else if(t.matches('#tablesBtn'))deny=blocked('tables');
+    else if(t.matches('#guideBtn,#hardGuideBtn,.toggle-guide-option'))deny=blocked('guide');
+    else if(t.matches('#hintBtn'))deny=training()?blocked('trainingHints'):blocked('compareHint');
+    else if(t.matches('#aidBtn')){const k=currentMixAid();deny=k==='tables'?blocked('tables'):blocked('ruler')}
+    if(deny){e.preventDefault();e.stopImmediatePropagation();window.MathasHints?.clear()}
+    setTimeout(apply,30)
+  },true);
+  document.addEventListener('focusin',()=>setTimeout(apply,10));
+  document.getElementById('masterModeUnlock')?.addEventListener('click',()=>setTimeout(apply,50));
+  document.getElementById('masterModeDisable')?.addEventListener('click',()=>setTimeout(apply,50));
+  new MutationObserver(()=>apply()).observe(document.body,{subtree:true,childList:true,attributes:true,attributeFilter:['class','hidden']});
+  apply()
 })();
 </script>
 
