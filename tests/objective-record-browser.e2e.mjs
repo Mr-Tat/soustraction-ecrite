@@ -32,6 +32,7 @@ test('menu et démarrage des trois vies sur Chromium PC et téléphone',async()=
       gameHidden:document.getElementById('gameScreen')?.classList.contains('hidden'),
       menuHidden:document.getElementById('menuScreen')?.classList.contains('hidden'),
       hud:document.getElementById('threeLivesHud')?.outerHTML.slice(0,250),
+      startMode:window.__mathasRecordStartMode,startCalls:window.__mathasRecordStartCalls,
       note:document.getElementById('feedback')?.textContent
    }));
    console.log('SOUSTRACTION_DEMO_DIAGNOSTIC',JSON.stringify({state,browserErrors,mobile}));
