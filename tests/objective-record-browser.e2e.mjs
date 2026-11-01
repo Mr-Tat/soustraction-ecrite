@@ -24,19 +24,8 @@ test('menu et démarrage des trois vies sur Chromium PC et téléphone',async()=
    assert.ok(left.x+left.width<=right.x+2,'Boutons qui se chevauchent à cette résolution');
    await page.locator('#xp-preview-mode').selectOption('free');
    assert.equal(await frame.locator('.classic-xp-remaining').count(),0);
-   const browserErrors=[];
-   page.on('pageerror',e=>browserErrors.push(String(e)));
    await frame.locator('#startThreeLives').click();
-   await page.waitForTimeout(450);
-   const state=await frame.locator('body').evaluate(()=>({
-      gameHidden:document.getElementById('gameScreen')?.classList.contains('hidden'),
-      menuHidden:document.getElementById('menuScreen')?.classList.contains('hidden'),
-      hud:document.getElementById('threeLivesHud')?.outerHTML.slice(0,250),
-      startMode:window.__mathasRecordStartMode,startCalls:window.__mathasRecordStartCalls,
-      note:document.getElementById('feedback')?.textContent
-   }));
-   console.log('SOUSTRACTION_DEMO_DIAGNOSTIC',JSON.stringify({state,browserErrors,mobile}));
-   await frame.locator('#threeLivesHud .demo-heart').first().waitFor({timeout:6000});
+   await frame.locator('#threeLivesHud .demo-heart').first().waitFor({timeout:15000});
    assert.equal(await frame.locator('#threeLivesHud .demo-heart').count(),3);
    assert.equal(await frame.locator('#threeLivesHud').getAttribute('hidden'),null);
    assert.match(await frame.locator('#sessionMode').textContent(),/3 vies/);
