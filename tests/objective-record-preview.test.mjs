@@ -33,6 +33,7 @@ test('essai isolé : carte, trois vies, sous-titre et bonus sans crédit serveur
  assert.equal(state.removed,true);
  assert.ok(frame.srcdoc.length>native.length);
  assert.match(frame.srcdoc,/threeLivesHud/);
+ assert.match(frame.srcdoc,/document\.getElementById\('startThreeLives'\)\.addEventListener/);
  assert.match(frame.srcdoc,/session\.hearts/);
  assert.match(frame.srcdoc,/startSession\('three-lives'\)/);
  assert.match(frame.srcdoc,/prefers-reduced-motion/);
