@@ -213,7 +213,7 @@ iframe{display:block;flex:1 1 auto;width:100%;height:auto;min-height:0;border:0;
      '  }',
      ''
    ].join('\n');
-   game=swap(game,'  function startSession(mode){',helpers+'  function startSession(mode){','aides trois vies');
+   game=swap(game,'  function startSession(mode){',helpers+'  function startSession(mode){window.__mathasRecordStartMode=mode;window.__mathasRecordStartCalls=(window.__mathasRecordStartCalls||0)+1;','aides trois vies');
    game=swap(game,
      "mode==='sudden'?+suddenMaxDigits.value:+trainingMaxDigits.value",
      "(mode==='sudden'||mode==='three-lives')?+suddenMaxDigits.value:+trainingMaxDigits.value",
