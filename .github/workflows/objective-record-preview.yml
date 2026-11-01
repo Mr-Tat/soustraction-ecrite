@@ -20,6 +20,15 @@ jobs:
           node-version: '22'
       - name: Vérifier la démo sur le moteur exact (Node, pas E2E)
         run: node --test tests/objective-record-preview.test.mjs
+      - name: Enregistrer les sources de la démo isolée (pour diagnostic local)
+        uses: actions/upload-artifact@v4
+        with:
+          name: subtraction-record-preview
+          path: |
+            index.html
+            essai-objectif-record-3-vies.html
+            tests/objective-record-browser.e2e.mjs
+          retention-days: 1
 
   chromium-ui:
     runs-on: ubuntu-latest
